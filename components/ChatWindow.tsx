@@ -9,7 +9,7 @@ interface ChatWindowProps {
   hints: string | null;
 }
 
-const ChatWindow = ({ code, problem, fetchAIHint, hints }: ChatWindowProps) => {
+const ChatWindow = ({ fetchAIHint, hints }: ChatWindowProps) => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {

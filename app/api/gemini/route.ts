@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ hint: result.data.hint });
-  } catch (error) {
+  } catch (error : Error | any) {
     return NextResponse.json({ error: 'Failed to fetch hint' }, { status: 500 });
   }
 }
