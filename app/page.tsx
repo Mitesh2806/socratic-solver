@@ -1,19 +1,19 @@
 'use client';
+
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { gsap } from 'gsap';
 
 export default function HomePage() {
-  const linksRef = useRef<HTMLUListElement | null>(null);
+  const linksRef = useRef<HTMLUListElement>(null); 
 
   useEffect(() => {
     if (linksRef.current) {
-      
       gsap.fromTo(
         linksRef.current.children,
         { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: 'power3.out'  }
+        { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: 'power3.out' }
       );
     }
   }, []);
@@ -27,7 +27,7 @@ export default function HomePage() {
         className="flex flex-col md:flex-row w-full max-w-2xl justify-center items-center gap-6 py-4"
       >
         <li className="w-full md:w-auto">
-          <Link href="/auth">
+          <Link href="/auth" passHref>
             <Button className="w-full hover:scale-105 transition-transform">
               Login/Sign Up
             </Button>
@@ -35,15 +35,16 @@ export default function HomePage() {
         </li>
         
         <li className="w-full md:w-auto">
-          <Link href="/submit-problem">
+          <Link href="/submit-problem" passHref>
             <Button className="w-full hover:scale-105 transition-transform">
               Submit a New Problem
             </Button>
           </Link>
         </li>
+        
         <li className="w-full md:w-auto">
-          <Link href="/evaluate">
-            <Button className="w-full hover:scale-105 transition-transform ">
+          <Link href="/evaluate" passHref>
+            <Button className="w-full hover:scale-105 transition-transform">
               Solve Problems
             </Button>
           </Link>

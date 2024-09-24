@@ -1,4 +1,3 @@
-// app/chat/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -13,8 +12,13 @@ export default function ChatPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await axios.post('/api/gemini', { prompt: message });
-    setResponse(result.data.hint);
+    try {
+      const result = await axios.post('/api/gemini', { prompt: message });
+      setResponse(result.data.hint);
+    } catch (error) {
+      console.error('Error fetching hint:', error);
+      setResponse('Failed to fetch hint');
+    }
   };
 
   return (
@@ -23,7 +27,7 @@ export default function ChatPage() {
       <form onSubmit={handleSubmit}>
         <textarea
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
           placeholder="Ask for a hint or help..."
         />
         <button type="submit">Submit</button>

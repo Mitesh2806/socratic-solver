@@ -1,4 +1,3 @@
-// app/evaluate/[id].tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -22,13 +21,12 @@ interface Problem {
 
 export default function ProblemEvaluationPage({ params }: { params: { id: string } }) {
   const [problem, setProblem] = useState<Problem | null>(null);
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState<string>('');
   const [result, setResult] = useState<string | null>(null);
-  const [isHintEnabled, setIsHintEnabled] = useState(false);
+  const [isHintEnabled, setIsHintEnabled] = useState<boolean>(false);
   const [hints, setHints] = useState<string | null>(null);
   
-  
-  const [editorWidth, setEditorWidth] = useState(50); // percentage of the window
+  const [editorWidth, setEditorWidth] = useState<number>(50); // percentage of the window
   const resizerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -78,26 +76,35 @@ export default function ProblemEvaluationPage({ params }: { params: { id: string
   };
 
   const handleToggleHints = () => {
-    setIsHintEnabled(!isHintEnabled);
+    setIsHintEnabled(prev => !prev);
   };
 
   const fetchAIHint = async () => {
     if (isHintEnabled && problem) {
-      const response = await fetch('/api/ai-hint', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code, problem }),
-      });
+      try {
+        const response = await fetch('/api/ai-hint', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code, problem }),
+        });
 
-      const data = await response.json();
-      setHints(data.hint);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setHints(data.hint);
+      } catch (error) {
+        console.error('Error fetching AI hint:', error);
+        setHints('Failed to fetch hint');
+      }
     }
   };
 
   // Resizer logic
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     const startX = e.clientX;
@@ -124,11 +131,11 @@ export default function ProblemEvaluationPage({ params }: { params: { id: string
           <div className="flex flex-col md:w-1/2">
             <h2 className="text-3xl font-bold mb-6">{problem.title}</h2>
             <p className="mb-4">{problem.description}</p>
-            <Button onClick={runTests} className="mt-2 bg-black w-36  text-white">Run Tests</Button>
+            <Button onClick={runTests} className="mt-2 bg-black w-36 text-white">Run Tests</Button>
             {result && <p className="mt-2">Test Results: {result}</p>}
-            <div className="hintToggle mt-4 mx-4 ">
-              <label >
-                <input type="checkbox" checked={isHintEnabled} onChange={handleToggleHints} className=' mr-5' />
+            <div className="hintToggle mt-4 mx-4">
+              <label>
+                <input type="checkbox" checked={isHintEnabled} onChange={handleToggleHints} className='mr-5' />
                 Enable Hints
               </label>
             </div>

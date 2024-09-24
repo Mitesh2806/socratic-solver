@@ -1,4 +1,3 @@
-// app/evaluate/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -17,17 +16,22 @@ export default function EvaluatePage() {
 
   useEffect(() => {
     const fetchProblems = async () => {
-      const querySnapshot = await getDocs(collection(db, 'problems'));
-      const problemData: Problem[] = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          title: data.title || '',
-          description: data.description || '',
-        };
-      }) as Problem[];
-      setProblems(problemData);
+      try {
+        const querySnapshot = await getDocs(collection(db, 'problems'));
+        const problemData: Problem[] = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title || '',
+            description: data.description || '',
+          };
+        });
+        setProblems(problemData);
+      } catch (error) {
+        console.error('Error fetching problems:', error);
+      }
     };
+
     fetchProblems();
   }, []);
 

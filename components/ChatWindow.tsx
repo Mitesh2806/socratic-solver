@@ -1,16 +1,22 @@
-// components/ChatWindow.tsx
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 
+
+interface Problem {
+  title: string;
+  description: string;
+  testCases: Array<{ input: string; expectedOutput: string }>;
+}
+
 interface ChatWindowProps {
   code: string;
-  problem: any;
+  problem: Problem; 
   fetchAIHint: () => void;
   hints: string | null;
 }
 
-const ChatWindow = ({ fetchAIHint, hints }: ChatWindowProps) => {
-  const [message, setMessage] = useState('');
+const ChatWindow = ({ fetchAIHint, hints, problem }: ChatWindowProps) => {
+  const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
     if (hints) {
@@ -23,7 +29,7 @@ const ChatWindow = ({ fetchAIHint, hints }: ChatWindowProps) => {
   };
 
   return (
-    <div className=' mr-14' style={{ marginTop: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px'  }}>
+    <div className='mr-14' style={{ marginTop: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}>
       <h3>Chat Window</h3>
       <p>Ask the AI for hints or suggestions!</p>
 
@@ -38,6 +44,12 @@ const ChatWindow = ({ fetchAIHint, hints }: ChatWindowProps) => {
       <Button onClick={handleFetchHint} style={{ marginTop: '10px' }}>
         Get Hint from AI
       </Button>
+
+      {/* Optionally display the problem details */}
+      <div style={{ marginTop: '10px' }}>
+        <h4>{problem.title}</h4>
+        <p>{problem.description}</p>
+      </div>
     </div>
   );
 };

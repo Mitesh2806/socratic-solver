@@ -1,4 +1,3 @@
-// app/api/gemini/route.ts
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
@@ -11,7 +10,10 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ hint: result.data.hint });
-  } catch (error : Error | any) {
+  } catch (error) {
+    // Log the error if needed for debugging
+    console.error('Error fetching hint:', error);
+
     return NextResponse.json({ error: 'Failed to fetch hint' }, { status: 500 });
   }
 }

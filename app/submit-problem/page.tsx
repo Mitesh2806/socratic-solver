@@ -3,49 +3,58 @@
 import { useEffect, useState, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { Button} from '@/components/ui/button';
-import {Textarea} from '@/components/ui/textarea';
-import {Input} from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { gsap } from 'gsap';
 
+// Define the structure for test case objects
+interface TestCase {
+  input: string;
+  expectedOutput: string;
+}
+
 export default function SubmitProblemPage() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [testCases, setTestCases] = useState('');
-  const [error, setError] = useState('');
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [testCases, setTestCases] = useState<string>('');
+  const [error, setError] = useState<string>('');
   
   const formRef = useRef<HTMLDivElement | null>(null);
 
   const handleSubmit = async () => {
     try {
-      // Attempt to parse the test cases input as JSON
-      const parsedTestCases = JSON.parse(testCases);
+      
+      const parsedTestCases: TestCase[] = JSON.parse(testCases);
 
-      // Validate that parsedTestCases is an array of objects with "input" and "expectedOutput"
-      if (!Array.isArray(parsedTestCases) || !parsedTestCases.every(tc => tc.input && tc.expectedOutput)) {
-        throw new Error('Invalid test cases format.');
+      
+      if (!Array.isArray(parsedTestCases) || !parsedTestCases.every((tc) => typeof tc.input === 'string' && typeof tc.expectedOutput === 'string')) {
+        throw new Error('Invalid test cases format. Must be an array of objects with "input" and "expectedOutput" as strings.');
       }
 
-      // Add the problem to Firestore
+      
       await addDoc(collection(db, 'problems'), {
         title,
         description,
-        testCases: parsedTestCases, 
+        testCases: parsedTestCases,
       });
 
-      // Reset form fields
+      
       setTitle('');
       setDescription('');
       setTestCases('');
       setError('');
-    } catch (err: Error | any) {
-      setError(`Failed to submit problem: ${err.message}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(`Failed to submit problem: ${err.message}`);
+      } else {
+        setError('An unknown error occurred.');
+      }
     }
   };
 
   useEffect(() => {
     if (formRef.current) {
-      // GSAP animation for form elements
       gsap.to(formRef.current, { opacity: 1, y: 20, duration: 1 });
     }
   }, []);
@@ -60,7 +69,7 @@ export default function SubmitProblemPage() {
           <Input
             type="text"
             value={title}
-            onChange={(e : Event | any) => setTitle(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)} 
             placeholder="Enter the problem title"
             className="mt-1 block w-full"
           />
@@ -70,7 +79,7 @@ export default function SubmitProblemPage() {
           <label className="block text-sm font-medium text-gray-700">Problem Description:</label>
           <Textarea
             value={description}
-            onChange={(e : Event|any) => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)} 
             placeholder="Enter the problem description"
             className="mt-1 block w-full"
           />
@@ -80,11 +89,8 @@ export default function SubmitProblemPage() {
           <label className="block text-sm font-medium text-gray-700">Test Cases (as JSON array):</label>
           <Textarea
             value={testCases}
-            onChange={(e :Event | any) => setTestCases(e.target.value)}
-            placeholder={`[
-  {"input": "input1", "expectedOutput": "output1"},
-  {"input": "input2", "expectedOutput": "output2"}
-]`}
+            onChange={(e) => setTestCases(e.target.value)} 
+            placeholder={`[{"input": "input1", "expectedOutput": "output1"}, {"input": "input2", "expectedOutput": "output2"}]`}
             className="mt-1 block w-full"
           />
         </div>

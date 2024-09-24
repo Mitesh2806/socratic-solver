@@ -1,11 +1,10 @@
-// app/auth/page.tsx
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
 import { auth } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { gsap } from 'gsap';
 
@@ -46,7 +45,7 @@ export default function LoginPage() {
             <Input
               type="email"
               value={email}
-              onChange={(e : Event | any) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               placeholder="Enter your email"
               className="mt-1 block w-full"
               required
@@ -57,7 +56,7 @@ export default function LoginPage() {
             <Input
               type="password"
               value={password}
-              onChange={(e : Event | any) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               placeholder="Enter your password"
               className="mt-1 block w-full"
               required
